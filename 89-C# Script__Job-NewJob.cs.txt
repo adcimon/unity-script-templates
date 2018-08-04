@@ -1,0 +1,15 @@
+﻿using UnityEngine;
+using Unity.Collections;
+using Unity.Jobs;
+
+public struct #SCRIPTNAME# : IJob
+{
+	public float a;
+	public float b;
+	public NativeArray<float> result;
+
+	public void Execute()
+	{
+		result[0] = a + b;
+	}
+}

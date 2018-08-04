@@ -1,0 +1,16 @@
+﻿using UnityEngine;
+using Unity.Collections;
+using Unity.Jobs;
+
+public struct #SCRIPTNAME# : IJobParallelFor
+{
+	public NativeArray<float> values;
+	public float deltaTime;
+
+	public void Execute( int index )
+	{
+		float value = values[index];
+		value += deltaTime;
+		values[index] = value;
+	}
+}
