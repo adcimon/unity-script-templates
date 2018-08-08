@@ -4,8 +4,10 @@ using Unity.Jobs;
 
 public struct #SCRIPTNAME# : IJobParallelFor
 {
-	public NativeArray<float> values;
+	[ReadOnly]
 	public float deltaTime;
+
+	public NativeArray<float> values;
 
 	public void Execute( int index )
 	{

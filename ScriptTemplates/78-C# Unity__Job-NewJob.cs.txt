@@ -4,8 +4,13 @@ using Unity.Jobs;
 
 public struct #SCRIPTNAME# : IJob
 {
+	[ReadOnly]
 	public float a;
+
+	[ReadOnly]
 	public float b;
+
+	[WriteOnly]
 	public NativeArray<float> result;
 
 	public void Execute()

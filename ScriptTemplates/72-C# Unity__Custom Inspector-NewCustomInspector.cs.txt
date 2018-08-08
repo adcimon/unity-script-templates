@@ -1,0 +1,18 @@
+﻿using UnityEngine;
+using UnityEditor;
+
+[CustomEditor(typeof(#TARGETCLASS#))]
+public class #SCRIPTNAME# : Editor
+{
+	private #TARGETCLASS# script;
+
+	private void Awake()
+	{
+		script = (#TARGETCLASS#)target;
+	}
+
+	public override void OnInspectorGUI()
+	{
+		DrawDefaultInspector();
+	}
+}

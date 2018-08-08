@@ -5,9 +5,10 @@ using Unity.Collections;
 public struct #SCRIPTNAME# : IJobParallelForTransform
 {
 	[ReadOnly]
-	public NativeArray<float> speeds;
-
 	public float deltaTime;
+
+	[ReadOnly]
+	public NativeArray<float> speeds;
 
 	public void Execute( int index, TransformAccess transform )
 	{
