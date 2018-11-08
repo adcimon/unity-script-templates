@@ -1,0 +1,39 @@
+﻿using UnityEngine;
+
+public class #SCRIPTNAME# : StateMachineBehaviour
+{
+	// Called before OnStateEnter is called on any state inside this state machine.
+	public override void OnStateEnter( Animator animator, AnimatorStateInfo stateInfo, int layerIndex )
+	{
+	}
+
+	// Called before OnStateUpdate is called on any state inside this state machine.
+	public override void OnStateUpdate( Animator animator, AnimatorStateInfo stateInfo, int layerIndex )
+	{
+	}
+
+	// Called before OnStateExit is called on any state inside this state machine.
+	public override void OnStateExit( Animator animator, AnimatorStateInfo stateInfo, int layerIndex )
+	{
+	}
+
+	// Called before OnStateMove is called on any state inside this state machine.
+	public override void OnStateMove( Animator animator, AnimatorStateInfo stateInfo, int layerIndex )
+	{
+	}
+
+	// Called before OnStateIK is called on any state inside this state machine.
+	public override void OnStateIK( Animator animator, AnimatorStateInfo stateInfo, int layerIndex )
+	{
+	}
+
+	// Called when entering a statemachine via its Entry Node.
+	public override void OnStateMachineEnter( Animator animator, int stateMachinePathHash )
+	{
+	}
+
+	// Called when exiting a statemachine via its Exit Node.
+	public override void OnStateMachineExit( Animator animator, int stateMachinePathHash )
+	{
+	}
+}
