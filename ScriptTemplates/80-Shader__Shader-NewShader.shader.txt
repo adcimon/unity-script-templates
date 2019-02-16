@@ -1,0 +1,147 @@
+// Conventions:
+//
+// Space at the end of the variable name.
+// OS: Object Space
+// WS: World Space
+// VS: View Space
+// CS: Homogenous Clip Space
+// TS: Tangent Space
+// TXS: Texture Space
+//
+// Capital letters for regular vectors (normalized).
+// N: Normal Vector
+// V: View Vector
+// L: Light Vector
+// H: Half Vector
+
+Shader "Hidden/#NAME#"
+{
+	Properties
+	{
+		_Color("Color", Color) = (1, 1, 1, 1)
+		_Texture("Texture", 2D) = "white" { }
+
+		[Header(Rendering)]
+		[Enum(UnityEngine.Rendering.CullMode)] _Cull("Culling", Int) = 2
+		[Enum(Off, 0, On, 1)] _ZWrite("Z Write", Int) = 1
+		[Enum(UnityEngine.Rendering.CompareFunction)] _ZTest("Z Test", Int) = 4
+		[Enum(None, 0, Alpha, 1, Red, 8, Green, 4, Blue, 2, RGB, 14, RGBA, 15)] _ColorMask("Color Mask", Int) = 15
+
+		[Header(Blending)]
+		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOp("Operation", Int) = 0
+		[Enum(UnityEngine.Rendering.BlendOp)] _BlendAlphaOp("Alpha Operation", Int) = 0
+		[Enum(UnityEngine.Rendering.BlendMode)] _BlendSrcFactor("Source Factor", Int) = 1
+		[Enum(UnityEngine.Rendering.BlendMode)] _BlendDstFactor("Destination Factor", Int) = 0
+		[Enum(UnityEngine.Rendering.BlendMode)] _BlendSrcAlphaFactor("Source Alpha Factor", Int) = 1
+		[Enum(UnityEngine.Rendering.BlendMode)] _BlendDstAlphaFactor("Destination Alpha Factor", Int) = 0
+
+		[Header(Stencil)]
+		_StencilRef("Reference Value [0, 255]", Float) = 0
+		_StencilReadMask("Read Mask [0, 255]", Int) = 255
+		_StencilWriteMask("Write Mask [0, 255]", Int) = 255
+		[Enum(UnityEngine.Rendering.CompareFunction)] _StencilComp("Compare Function", Int) = 8
+		[Enum(UnityEngine.Rendering.StencilOp)] _StencilPass("Pass Operation", Int) = 0
+		[Enum(UnityEngine.Rendering.StencilOp)] _StencilFail("Fail Operation", Int) = 0
+		[Enum(UnityEngine.Rendering.StencilOp)] _StencilZFail("Z Fail Operation", Int) = 0
+	}
+
+	SubShader
+	{
+		// Queue Tag (rendering order):
+		//		Background (1000) - This render queue is rendered before any others. It is used for skyboxes and the like.
+		//		Geometry (2000) - This is used for most objects. Opaque geometry uses this queue.
+		//		AlphaTest (2450) - Alpha tested geometry uses this queue. It’s a separate queue from Geometry one since it’s more efficient to render alpha-tested objects after all solid ones are drawn.
+		//		Transparent (3000) - This render queue is rendered after Geometry and AlphaTest, in back-to-front order. Anything alpha-blended (i.e. shaders that don’t write to depth buffer) should go here (glass, particle effects).
+		//		Overlay (4000) - This render queue is meant for overlay effects. Anything rendered last should go here (e.g. lens flares).
+		Tags { "Queue" = "Geometry" }
+
+		// Cull: Off = 0, Front = 1, Back = 2
+		Cull [_Cull]
+
+		// ZWrite: Off = 0, On = 1
+		// ZTest: Disabled = 0, Never = 1, Less = 2, Equal = 3, LessEqual = 4, Greater = 5, NotEqual = 6, GreaterEqual = 7, Always = 8
+		ZWrite [_ZWrite]
+		ZTest [_ZTest]
+
+		// ColorMask.
+		// Channels of the framebuffer that will be written into.
+		// None = 0, Alpha = 1, Red = 8, Green = 4, Blue = 2, RGB = 14, RGBA = 15
+		ColorMask [_ColorMask]
+
+		// Blend Operations (logical operations are D3D11.1 only and the last ones are advanced OpenGL blending):
+		//		Add = 0, Subtract = 1, ReverseSubtract = 2, Min = 3, Max = 4,
+		//		LogicalClear = 5, LogicalSet = 6, LogicalCopy = 7, LogicalCopyInverted = 8, LogicalNoop = 9,
+		//		LogicalInvert = 10, LogicalAnd = 11, LogicalNand = 12, LogicalOr = 13, LogicalNor = 14,
+		//		LogicalXor = 15, LogicalEquiv = 16, LogicalAndReverse = 17, LogicalAndInverted = 18, LogicalOrReverse = 19,
+		//		LogicalOrInverted = 20, Multiply = 21, Screen = 22, Overlay = 23, Darken = 24,
+		//		Lighten = 25, ColorDodge = 26, ColorBurn = 27, HardLight = 28, SoftLight = 29,
+		//		Difference = 30, Exculsion = 31, HSLHue = 32, HSLSaturation = 33, HSLColor = 34,
+		//		HSLLuminosity = 35
+
+		// Blend Factors: Zero = 0, One = 1, DstColor = 2, SrcColor = 3, OneMinusDstColor = 4, SrcAlpha = 5, OneMinusSrcColor = 6, DstAlpha = 7, OneMinusDstAlpha = 8, SrcAlphaSaturate = 9, OneMinusSrcAlpha = 10
+		// Blend SrcFactor DstFactor, SrcAlphaFactor DstAlphaFactor
+		//		SrcAlpha OneMinusSrcAlpha - Traditional transparency.
+		//		One OneMinusSrcAlpha - Premultiplied transparency.
+		//		One One - Additive.
+		//		OneMinusDstColor One - Soft additive.
+		//		DstColor Zero - Multiplicative.
+		//		DstColor SrcColor - Multiplicative 2x.
+
+		// This syntax can set up different blending modes for individual render targets, where N is the render target index (0..7). This feature works on most modern APIs/GPUs (DX11/12, GLCore, Metal, PS4).
+		// BlendOp N BlendOp, BlendAlphaOp
+		// Blend N SrcFactor DstFactor, SrcAlphaFactor DstAlphaFactor
+
+		BlendOp [_BlendOp], [_BlendAlphaOp]
+		Blend [_BlendSrcFactor] [_BlendDstFactor], [_BlendSrcAlphaFactor] [_BlendDstAlphaFactor]
+
+		// Stencil.
+		// General purpose per pixel mask for saving or discarding pixels.
+		Stencil
+		{
+			Ref [_StencilRef]
+			ReadMask [_StencilReadMask]
+			WriteMask [_StencilWriteMask]
+			Comp [_StencilComp]
+			Pass [_StencilPass]
+			Fail [_StencilFail]
+			ZFail [_StencilZFail]
+		}
+
+		Pass
+		{
+			HLSLPROGRAM
+			#pragma vertex Vertex
+			#pragma fragment Fragment
+			#include "UnityCG.cginc"
+
+			float4 _Color;
+			sampler2D _Texture;
+
+			struct Attributes
+			{
+				float4 positionOS : POSITION;
+				float2 uv : TEXCOORD0;
+			};
+
+			struct Varyings
+			{
+				float4 positionCS : SV_POSITION;
+				float2 uv : TEXCOORD0;
+			};
+
+			Varyings Vertex( Attributes input )
+			{
+				Varyings output;
+				output.positionCS = UnityObjectToClipPos(input.positionOS);
+				output.uv = input.uv;
+				return output;
+			}
+
+			fixed4 Fragment( Varyings input ) : SV_TARGET
+			{
+				return tex2D(_Texture, input.uv) * _Color;
+			}
+			ENDHLSL
+		}
+	}
+}
