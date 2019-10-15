@@ -137,7 +137,7 @@ Shader "Hidden/#NAME#"
 				return output;
 			}
 
-			fixed4 Fragment( Varyings input ) : SV_TARGET
+			half4 Fragment( Varyings input ) : SV_TARGET
 			{
 				return tex2D(_MainTex, input.uv) * _Color;
 			}
