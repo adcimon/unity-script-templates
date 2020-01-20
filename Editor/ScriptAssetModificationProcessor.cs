@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using UnityEngine;
 using UnityEditor;
 
@@ -6,7 +6,7 @@ public class ScriptAssetModificationProcessor : UnityEditor.AssetModificationPro
 {
     private static void OnWillCreateAsset( string assetName )
     {
-        // Remove the '.meta' extension.
+        // Remove the meta extension.
         assetName = assetName.Replace(".meta", "");
         int index = assetName.LastIndexOf(".");
         if( index < 0 )
