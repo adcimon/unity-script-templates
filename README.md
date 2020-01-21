@@ -1,4 +1,4 @@
-# Unity Script Templates.
+# Unity Script Templates
 
 Collection of script templates I made for my Unity projects.
 
