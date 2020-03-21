@@ -1,5 +1,5 @@
 # Unity Script Templates
 
-Collection of script templates I made for my Unity projects.
+Collection of custom script templates.
 
 To use them copy the script templates in the folder `Unity/Editor/Data/Resources/ScriptTemplates/`.
