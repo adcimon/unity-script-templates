@@ -8,7 +8,7 @@ public class #SCRIPTNAME# : Editor
 
 	private void Awake()
 	{
-		script = (#TARGETCLASS#)target;
+		this.script = (#TARGETCLASS#)target;
 	}
 
 	public override void OnInspectorGUI()
