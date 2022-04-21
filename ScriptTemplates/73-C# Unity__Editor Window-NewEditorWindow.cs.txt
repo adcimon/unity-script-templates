@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 
 public class #SCRIPTNAME# : EditorWindow
@@ -6,7 +6,7 @@ public class #SCRIPTNAME# : EditorWindow
 	[MenuItem("Window/#SCRIPTNAME#")]
 	private static void Init()
 	{
-		#SCRIPTNAME# window = (#SCRIPTNAME#)EditorWindow.GetWindow(typeof(#SCRIPTNAME#));
+		#SCRIPTNAME# window = EditorWindow.GetWindow<#SCRIPTNAME#>("#SCRIPTNAME#");
 		window.Show();
 	}
 
